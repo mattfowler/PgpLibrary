@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PgpLibrary", "PgpLibrary\PgpLibrary.csproj", "{7F96CCA2-5E5A-4E86-BEF8-DC1AEEAA08E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PgpLibaryTests", "PgpLibaryTests\PgpLibaryTests.csproj", "{57C72C30-4C04-4124-85B8-FA1B25ADF80C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{7F96CCA2-5E5A-4E86-BEF8-DC1AEEAA08E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F96CCA2-5E5A-4E86-BEF8-DC1AEEAA08E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F96CCA2-5E5A-4E86-BEF8-DC1AEEAA08E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57C72C30-4C04-4124-85B8-FA1B25ADF80C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57C72C30-4C04-4124-85B8-FA1B25ADF80C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57C72C30-4C04-4124-85B8-FA1B25ADF80C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57C72C30-4C04-4124-85B8-FA1B25ADF80C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

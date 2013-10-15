@@ -1,0 +1,8 @@
+c:\users\maf725\documents\visual studio 2012\Projects\PgpLibrary\PgpLibaryTests\bin\Debug\PgpLibaryTests.dll
+c:\users\maf725\documents\visual studio 2012\Projects\PgpLibrary\PgpLibaryTests\bin\Debug\PgpLibaryTests.pdb
+c:\users\maf725\documents\visual studio 2012\Projects\PgpLibrary\PgpLibaryTests\bin\Debug\BouncyCastle.Crypto.dll
+c:\users\maf725\documents\visual studio 2012\Projects\PgpLibrary\PgpLibaryTests\bin\Debug\PgpLibrary.dll
+c:\users\maf725\documents\visual studio 2012\Projects\PgpLibrary\PgpLibaryTests\bin\Debug\PgpLibrary.pdb
+c:\users\maf725\documents\visual studio 2012\Projects\PgpLibrary\PgpLibaryTests\obj\Debug\PgpLibaryTests.csprojResolveAssemblyReference.cache
+c:\users\maf725\documents\visual studio 2012\Projects\PgpLibrary\PgpLibaryTests\obj\Debug\PgpLibaryTests.dll
+c:\users\maf725\documents\visual studio 2012\Projects\PgpLibrary\PgpLibaryTests\obj\Debug\PgpLibaryTests.pdb

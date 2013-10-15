@@ -11,7 +11,7 @@ namespace PgpLibaryTests
     [TestClass]
     public class PgpVerifierTests
     {
-        //Email and password for reference
+        //Email and password used to sign messages for reference
         private static string email = "test@test.com";
         private static string password = "password";
 
@@ -37,26 +37,113 @@ namespace PgpLibaryTests
                                           "=QQHY\r\n" +
                                           "-----END PGP PUBLIC KEY BLOCK-----\r\n";
 
+        string ticket = "I pity the fool who dosen't sign messages.";
+
+        string correctSignatureForTicket = "-----BEGIN PGP SIGNATURE-----\r\n" +
+                                           "Version: BCPG v1.47\r\n\r\n" +
+                                           "iGAEARECACAFAlJdVpwZHHRlc3RwYWlyIDx0ZXN0QHRlc3QuY29tPgAKCRC8T6Xu" +
+                                           "Dt49sNoJAJ4moLkNl0UsxVwSsGXcq4ImRugucACfSkZkKFtntVH2rIxNm64N707c" +
+                                           "oQA=\r\n" +
+                                           "=6vfJ\r\n" +
+                                           "-----END PGP SIGNATURE-----\r\n";
 
         [TestMethod]
         public void ShouldBeAbleToVerifyACorrectSignature()
         {
-            string ticket = "I pity the fool who dosen't sign messages.";
-            string signature =  "-----BEGIN PGP SIGNATURE-----\r\n" + 
-                                "Version: BCPG v1.47\r\n\r\n" +
-                                "iGAEARECACAFAlJdVpwZHHRlc3RwYWlyIDx0ZXN0QHRlc3QuY29tPgAKCRC8T6Xu"+
-                                "Dt49sNoJAJ4moLkNl0UsxVwSsGXcq4ImRugucACfSkZkKFtntVH2rIxNm64N707c" +
-                                "oQA=\r\n"+
-                                "=6vfJ\r\n"+
-                                "-----END PGP SIGNATURE-----\r\n";
-
-
-            Stream signatureStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(signature));
+            Stream signatureStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(correctSignatureForTicket));
             Stream ticketStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(ticket));
             Stream keyString = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(publicKey));
-            bool verified = PgpVerifier.VerifyTicketWithSignature(ticketStream, signatureStream, keyString);
 
-            Assert.IsTrue(verified);
+            Assert.IsTrue(PgpVerifier.VerifyTicketWithSignature(ticketStream, signatureStream, keyString));
+        }
+
+        [TestMethod]
+        public void ShouldFailOnACorruptedTicket()
+        {
+            String corruptTicket = "Mr T does not pity any fools.";
+            Stream corruptTicketStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(corruptTicket));
+
+            Stream signatureStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(correctSignatureForTicket));
+            Stream keyString = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(publicKey));
+            
+            Assert.IsFalse(PgpVerifier.VerifyTicketWithSignature(corruptTicketStream, signatureStream, keyString));
+        }
+
+        [TestMethod]
+        public void ShouldThrowExceptionOnInvalidSignature()
+        {
+            string corruptSignature = "-----BEGIN PGP SIGNATURE-----\r\n" +
+                                      "Version: BCPG v1.47\r\n\r\n" +
+                                      "My spoon is too big\r\n" +
+                                      "=6vfJ\r\n" +
+                                      "-----END PGP SIGNATURE-----\r\n";
+
+            Stream signatureStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(corruptSignature));
+            Stream ticketStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(ticket));
+            Stream keyString = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(publicKey));
+
+            try
+            {
+                PgpVerifier.VerifyTicketWithSignature(ticketStream, signatureStream, keyString);
+            }
+            catch(IOException e) 
+            {
+                StringAssert.Contains(e.Message, "unknown object in stream");
+                return;
+            }
+            Assert.Fail();
+        }
+
+        [TestMethod]
+        public void ShouldThrowExceptionOnIncorrectPublicKey()
+        {
+            string corruptPublicKey = "-----BEGIN PGP PUBLIC KEY BLOCK-----\r\n" +
+                                          "Version: BCPG v1.47\r\n\r\n" +
+                                          "eKwqU2E34QCfb6ed205eQoGjWMB8Hr2HV3UmveU=\r\n" +
+                                          "=QQHY\r\n" +
+                                      "-----END PGP PUBLIC KEY BLOCK-----\r\n";
+
+            Stream signatureStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(correctSignatureForTicket));
+            Stream ticketStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(ticket));
+            Stream keyString = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(corruptPublicKey));
+
+            try
+            {
+                PgpVerifier.VerifyTicketWithSignature(ticketStream, signatureStream, keyString);
+            }
+            catch (IOException e)
+            {
+                StringAssert.Contains(e.Message, "unknown object in stream");
+                return;
+            }
+
+            Assert.Fail();
+        }
+
+        [TestMethod]
+        public void ShouldThrowExceptionOnInvalidHeader()
+        {
+
+            string publicKeyInvalidHeader = "-----BEGIN PGP PUBLIC KEY BLOCK-----\r\n" +
+                                            "Version: BCPG v1.47\r\n\r\n" +
+                                            "I am a banana\r\n" +
+                                            "=QQHY\r\n" +
+                                            "-----END PGP PUBLIC KEY BLOCK-----\r\n";
+
+            Stream signatureStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(correctSignatureForTicket));
+            Stream ticketStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(ticket));
+            Stream invalidHeaderKeyString = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(publicKeyInvalidHeader));
+
+            try
+            {
+                PgpVerifier.VerifyTicketWithSignature(ticketStream, signatureStream, invalidHeaderKeyString);
+            }
+            catch (IOException e)
+            {
+                StringAssert.Contains(e.Message, "invalid header encountered");
+                return;
+            }
+            Assert.Fail();
         }
     }
 }
